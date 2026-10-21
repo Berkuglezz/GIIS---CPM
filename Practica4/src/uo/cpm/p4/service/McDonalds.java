@@ -60,8 +60,20 @@ public class McDonalds {
 	    return pedido.getUnidades(articulo);
 	}
 
-	public void eliminarPedido(Articulo articuloSeleccionado, int unidadesSeleccionados) {
-		pedido.eliminarPedido(articuloSeleccionado,unidadesSeleccionados);
+	public void eliminarDePedido(Articulo articulo, int unidades) {
+		pedido.eliminar(articulo, unidades);
+	}
+
+	public boolean isArticuloEnPedido(Articulo articulo) {
+		return pedido.contiene(articulo);
+	}
+
+	public boolean isPedidoVacio() {
+		return pedido.isVacio();
+	}
+
+	public String getTextoPedido() {
+		return pedido.toString();
 	}
 
 }

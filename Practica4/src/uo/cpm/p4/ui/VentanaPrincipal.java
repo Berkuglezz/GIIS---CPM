@@ -1,6 +1,6 @@
 package uo.cpm.p4.ui;
 
-import java.awt.EventQueue;
+import java.util.Locale;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -22,10 +22,14 @@ import javax.swing.SpinnerNumberModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JToggleButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class VentanaPrincipal extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private static final Locale ES = Locale.of("es", "ES");
 	private JPanel contentPanePrincipal;
 	private JLabel lblLogo;
 	private JLabel lblMacdonalds;
@@ -41,24 +45,29 @@ public class VentanaPrincipal extends JFrame {
 	private McDonalds mc;
 	private JLabel lblUnidadesAnadidas;
 	private JButton btnEliminar;
+	private JToggleButton tglbtnPedido;
+	private JScrollPane scrollPedido;
+	private JTextArea txtAreaPedido;
 
 	/**
 	 * Create the frame.
-	 * @param macdonalds 
+	 * @param macdonalds
 	 */
 	public VentanaPrincipal(McDonalds macdonalds) {
 		this.mc = macdonalds;
 		setResizable(false);
-		setTitle("MacDonal´s españa");
+		setTitle("McDonald's España");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(VentanaPrincipal.class.getResource("/img/logo.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 608, 390);
+		setBounds(100, 100, 756, 432);
 		setLocationRelativeTo(null);
 		contentPanePrincipal = new JPanel();
 		contentPanePrincipal.setBackground(new Color(255, 255, 255));
 		contentPanePrincipal.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPanePrincipal);
 		contentPanePrincipal.setLayout(null);
+		contentPanePrincipal.add(getTglbtnPedido());
+		contentPanePrincipal.add(getScrollPedido());
 		contentPanePrincipal.add(getLblLogo());
 		contentPanePrincipal.add(getLblMacdonalds());
 		contentPanePrincipal.add(getLblArticulos());
@@ -66,40 +75,38 @@ public class VentanaPrincipal extends JFrame {
 		contentPanePrincipal.add(getLblUnidades());
 		contentPanePrincipal.add(getSpUnidades());
 		contentPanePrincipal.add(getBtnAnadir());
+		contentPanePrincipal.add(getBtnEliminar());
+		contentPanePrincipal.add(getLblUnidadesAnadidas());
 		contentPanePrincipal.add(getLblPrecioPedido());
 		contentPanePrincipal.add(getTextFieldPrecio());
-		contentPanePrincipal.add(getBtnNewButton());
 		contentPanePrincipal.add(getBtnSiguiente());
-		contentPanePrincipal.add(getLblUnidadesAnadidas());
-		contentPanePrincipal.add(getBtnEliminar());
-
+		contentPanePrincipal.add(getBtnNewButton());
+		actualizarEstado();
 	}
 
 	private JLabel getLblLogo() {
 		if (lblLogo == null) {
 			lblLogo = new JLabel("");
 			lblLogo.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/img/logo.png")));
-			lblLogo.setBackground(new Color(255, 255, 255));
-			lblLogo.setBounds(10, 11, 210, 130);
+			lblLogo.setBounds(20, 55, 144, 130);
 		}
 		return lblLogo;
 	}
 	private JLabel getLblMacdonalds() {
 		if (lblMacdonalds == null) {
-			lblMacdonalds = new JLabel("McDonald´s");
+			lblMacdonalds = new JLabel("McDonald's");
 			lblMacdonalds.setFont(new Font("Arial", Font.BOLD, 44));
-			lblMacdonalds.setBackground(new Color(240, 240, 240));
-			lblMacdonalds.setBounds(256, 36, 298, 103);
+			lblMacdonalds.setBounds(190, 135, 300, 60);
 		}
 		return lblMacdonalds;
 	}
 	private JLabel getLblArticulos() {
 		if (lblArticulos == null) {
-			lblArticulos = new JLabel("Articulos:");
-			lblArticulos.setDisplayedMnemonic('a');
+			lblArticulos = new JLabel("Artículos:");
+			lblArticulos.setDisplayedMnemonic('r');
 			lblArticulos.setLabelFor(getCbArticulos());
 			lblArticulos.setFont(new Font("Arial", Font.PLAIN, 12));
-			lblArticulos.setBounds(10, 165, 74, 21);
+			lblArticulos.setBounds(25, 205, 100, 20);
 		}
 		return lblArticulos;
 	}
@@ -109,12 +116,12 @@ public class VentanaPrincipal extends JFrame {
 			cbArticulos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					getSpUnidades().setValue(1);
-					actualizarTexto();
+					actualizarEstado();
 				}
 			});
 			cbArticulos.setModel(new DefaultComboBoxModel<Articulo>(mc.getArticulosCarta()));
 			cbArticulos.setFont(new Font("Arial", Font.PLAIN, 12));
-			cbArticulos.setBounds(10, 184, 303, 22);
+			cbArticulos.setBounds(25, 237, 390, 25);
 		}
 		return cbArticulos;
 	}
@@ -124,7 +131,7 @@ public class VentanaPrincipal extends JFrame {
 			lblUnidades.setDisplayedMnemonic('U');
 			lblUnidades.setLabelFor(getSpUnidades());
 			lblUnidades.setFont(new Font("Arial", Font.PLAIN, 12));
-			lblUnidades.setBounds(345, 168, 69, 14);
+			lblUnidades.setBounds(428, 205, 80, 20);
 		}
 		return lblUnidades;
 	}
@@ -133,67 +140,116 @@ public class VentanaPrincipal extends JFrame {
 			spUnidades = new JSpinner();
 			spUnidades.setModel(new SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
 			spUnidades.setFont(new Font("Arial", Font.PLAIN, 12));
-			spUnidades.setBounds(345, 185, 49, 20);
+			spUnidades.setBounds(428, 237, 60, 25);
 		}
 		return spUnidades;
 	}
 	private JButton getBtnAnadir() {
 		if (btnAnadir == null) {
-			btnAnadir = new JButton("Anadir");
+			btnAnadir = new JButton("Añadir");
 			btnAnadir.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					anadirApedido();
-					actualizarTexto();
 				}
 			});
-			btnAnadir.setMnemonic('I');
-			btnAnadir.setBackground(new Color(0, 255, 0));
+			btnAnadir.setMnemonic('A');
+			btnAnadir.setBackground(new Color(0, 160, 0));
 			btnAnadir.setForeground(new Color(255, 255, 255));
 			btnAnadir.setFont(new Font("Arial", Font.PLAIN, 12));
-			btnAnadir.setBounds(430, 184, 74, 23);
+			btnAnadir.setBounds(514, 237, 90, 25);
 		}
 		return btnAnadir;
 	}
-	
-	protected void actualizarTexto() {
-		getLblUnidadesAnadidas().setText("Usted tiene "+ articulosEnLaLista()+" unidades de este articulo");
+	private JButton getBtnEliminar() {
+		if (btnEliminar == null) {
+			btnEliminar = new JButton("Eliminar");
+			btnEliminar.setEnabled(false);
+			btnEliminar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					eliminarDePedido();
+				}
+			});
+			btnEliminar.setMnemonic('E');
+			btnEliminar.setBackground(new Color(0, 160, 0));
+			btnEliminar.setForeground(Color.WHITE);
+			btnEliminar.setFont(new Font("Arial", Font.PLAIN, 12));
+			btnEliminar.setBounds(641, 237, 90, 25);
+		}
+		return btnEliminar;
 	}
 
-	private int articulosEnLaLista() {
-	    Articulo seleccionado = (Articulo) getCbArticulos().getSelectedItem();
-	    if (seleccionado != null) {
-	        return mc.getUnidadesArticulo(seleccionado);
-	    }
-	    return 0;
+	// Refleja en la interfaz el estado actual del pedido
+	private void actualizarEstado() {
+		Articulo seleccionado = getArticuloSeleccionado();
+		int unidades = mc.getUnidadesArticulo(seleccionado);
+		getLblUnidadesAnadidas().setText(unidades > 0
+				? "Hay " + unidades + " uds. de este artículo en el pedido"
+				: "");
+		getBtnEliminar().setEnabled(mc.isArticuloEnPedido(seleccionado));
+		getBtnSiguiente().setEnabled(!mc.isPedidoVacio());
+		getTextFieldPrecio().setText(mc.isPedidoVacio() ? "" : String.format(ES, "%.2f €", mc.getImportePedido()));
+		getTxtAreaPedido().setText(mc.getTextoPedido());
+	}
+
+	private Articulo getArticuloSeleccionado() {
+		return (Articulo) getCbArticulos().getSelectedItem();
 	}
 
 	protected void anadirApedido() {
-		Articulo articuloSeleccionado = (Articulo) getCbArticulos().getSelectedItem();
 		int unidadesSeleccionados = (int) getSpUnidades().getValue();
-		mc.aniadirAPedido(articuloSeleccionado, unidadesSeleccionados);
-		String precio = String.format("% .2f",mc.getImportePedido());
-		getTextFieldPrecio().setText(precio+" €");
-		if(!getBtnSiguiente().isEnabled()) {
-			getBtnSiguiente().setEnabled(true);
-		}	
+		mc.aniadirAPedido(getArticuloSeleccionado(), unidadesSeleccionados);
+		actualizarEstado();
 	}
 
+	protected void eliminarDePedido() {
+		int unidadesSeleccionados = (int) getSpUnidades().getValue();
+		mc.eliminarDePedido(getArticuloSeleccionado(), unidadesSeleccionados);
+		actualizarEstado();
+	}
+
+	private JLabel getLblUnidadesAnadidas() {
+		if (lblUnidadesAnadidas == null) {
+			lblUnidadesAnadidas = new JLabel("");
+			lblUnidadesAnadidas.setForeground(Color.RED);
+			lblUnidadesAnadidas.setFont(new Font("Arial", Font.BOLD, 12));
+			lblUnidadesAnadidas.setBounds(40, 272, 375, 20);
+		}
+		return lblUnidadesAnadidas;
+	}
 	private JLabel getLblPrecioPedido() {
 		if (lblPrecioPedido == null) {
-			lblPrecioPedido = new JLabel("Precio pedido:");
+			lblPrecioPedido = new JLabel("Precio Pedido:");
 			lblPrecioPedido.setFont(new Font("Arial", Font.PLAIN, 12));
-			lblPrecioPedido.setBounds(345, 216, 118, 14);
+			lblPrecioPedido.setBounds(511, 290, 120, 20);
 		}
 		return lblPrecioPedido;
 	}
 	private JTextField getTextFieldPrecio() {
 		if (textFieldPrecio == null) {
 			textFieldPrecio = new JTextField();
-			textFieldPrecio.setEnabled(false);
-			textFieldPrecio.setBounds(345, 230, 118, 29);
+			textFieldPrecio.setEditable(false);
+			textFieldPrecio.setFont(new Font("Serif", Font.BOLD, 14));
+			textFieldPrecio.setBounds(513, 313, 90, 24);
 			textFieldPrecio.setColumns(10);
 		}
 		return textFieldPrecio;
+	}
+	private JButton getBtnSiguiente() {
+		if (btnSiguiente == null) {
+			btnSiguiente = new JButton("Siguiente");
+			btnSiguiente.setEnabled(false);
+			btnSiguiente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					mostrarVentanaRegistro();
+				}
+			});
+			btnSiguiente.setMnemonic('S');
+			btnSiguiente.setBackground(new Color(0, 160, 0));
+			btnSiguiente.setForeground(new Color(255, 255, 255));
+			btnSiguiente.setFont(new Font("Arial", Font.PLAIN, 12));
+			btnSiguiente.setBounds(514, 357, 90, 25);
+		}
+		return btnSiguiente;
 	}
 	private JButton getBtnNewButton() {
 		if (btnNewButton == null) {
@@ -206,26 +262,10 @@ public class VentanaPrincipal extends JFrame {
 			btnNewButton.setMnemonic('C');
 			btnNewButton.setForeground(new Color(255, 255, 255));
 			btnNewButton.setBackground(new Color(255, 0, 0));
-			btnNewButton.setBounds(473, 321, 113, 23);
+			btnNewButton.setFont(new Font("Arial", Font.PLAIN, 12));
+			btnNewButton.setBounds(641, 357, 90, 25);
 		}
 		return btnNewButton;
-	}
-	private JButton getBtnSiguiente() {
-		if (btnSiguiente == null) {
-			btnSiguiente = new JButton("Siguiente");
-			btnSiguiente.setEnabled(false);
-			btnSiguiente.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					mostrarVentanaRegistro();
-				}
-			});
-			btnSiguiente.setMnemonic('S');
-			btnSiguiente.setBackground(new Color(0, 255, 0));
-			btnSiguiente.setForeground(new Color(255, 255, 255));
-			btnSiguiente.setFont(new Font("Arial", Font.PLAIN, 12));
-			btnSiguiente.setBounds(345, 321, 118, 23);
-		}
-		return btnSiguiente;
 	}
 
 	protected void mostrarVentanaRegistro() {
@@ -233,36 +273,55 @@ public class VentanaPrincipal extends JFrame {
 		vp.setModal(true);
 		vp.setVisible(true);
 	}
-	
+
 	public McDonalds getMc() {
 		return mc;
 	}
-	private JLabel getLblUnidadesAnadidas() {
-		if (lblUnidadesAnadidas == null) {
-			lblUnidadesAnadidas = new JLabel("");
-			lblUnidadesAnadidas.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblUnidadesAnadidas.setBounds(10, 216, 283, 14);
-		}
-		return lblUnidadesAnadidas;
-	}
-	
-	private void resetearVentanaPrincipal() {
+
+	// Deja la ventana preparada para el pedido del siguiente cliente
+	public void resetearVentanaPrincipal() {
 		mc.inicializarPedido();
-		getCbArticulos().setSelectedIndex(0);
+		getTglbtnPedido().setSelected(false);
+		getScrollPedido().setVisible(false);
+		getCbArticulos().setSelectedIndex(0);	// su actionPerformed actualiza el estado
 		getSpUnidades().setValue(1);
-		getTextFieldPrecio().setText("");
-		getLblUnidadesAnadidas().setText("");
-		getBtnSiguiente().setEnabled(false);
+		actualizarEstado();
 	}
-	private JButton getBtnEliminar() {
-		if (btnEliminar == null) {
-			btnEliminar = new JButton("Eliminar");
-			btnEliminar.setMnemonic('E');
-			btnEliminar.setForeground(Color.WHITE);
-			btnEliminar.setFont(new Font("Arial", Font.PLAIN, 12));
-			btnEliminar.setBackground(new Color(255, 0, 0));
-			btnEliminar.setBounds(514, 184, 74, 23);
+
+	private JToggleButton getTglbtnPedido() {
+		if (tglbtnPedido == null) {
+			tglbtnPedido = new JToggleButton("Pedido");
+			tglbtnPedido.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					getScrollPedido().setVisible(tglbtnPedido.isSelected());
+				}
+			});
+			tglbtnPedido.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/img/pedido.png")));
+			tglbtnPedido.setToolTipText("Muestra u oculta el pedido actual");
+			tglbtnPedido.setMnemonic('P');
+			tglbtnPedido.setBackground(new Color(255, 170, 40));
+			tglbtnPedido.setFont(new Font("Arial", Font.BOLD, 16));
+			tglbtnPedido.setBounds(586, 5, 145, 52);
 		}
-		return btnEliminar;
+		return tglbtnPedido;
+	}
+	private JScrollPane getScrollPedido() {
+		if (scrollPedido == null) {
+			scrollPedido = new JScrollPane();
+			scrollPedido.setVisible(false);
+			scrollPedido.setBounds(513, 62, 218, 120);
+			scrollPedido.setViewportView(getTxtAreaPedido());
+		}
+		return scrollPedido;
+	}
+	private JTextArea getTxtAreaPedido() {
+		if (txtAreaPedido == null) {
+			txtAreaPedido = new JTextArea();
+			txtAreaPedido.setEditable(false);
+			txtAreaPedido.setLineWrap(true);
+			txtAreaPedido.setWrapStyleWord(true);
+			txtAreaPedido.setFont(new Font("Arial", Font.PLAIN, 12));
+		}
+		return txtAreaPedido;
 	}
 }

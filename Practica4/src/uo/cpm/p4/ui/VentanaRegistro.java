@@ -146,6 +146,10 @@ public class VentanaRegistro extends JDialog {
 		
 	}
 
+	public void reiniciarVentanaPrincipal() {
+		vp.resetearVentanaPrincipal();
+	}
+
 	protected boolean validarValores() {
 		if((validarNombre() && validarPassword())==true) {
 			actualizarDatosPedido();

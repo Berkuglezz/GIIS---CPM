@@ -27,22 +27,51 @@ public class Pedido {
 	}
 
 	public void add(Articulo articuloDelCatalogo, int unidades) {
-		Articulo articuloEnPedido = null;
+		Articulo articuloEnPedido = buscar(articuloDelCatalogo);
 
-		for (Articulo a : listaPedido) {
-			if (a.getCodigo().equals(articuloDelCatalogo.getCodigo())) {
-				articuloEnPedido = a;
-				articuloEnPedido.setUnidades(articuloEnPedido.getUnidades() + unidades);
-				break;
-			}
-		}
-
-		if (articuloEnPedido == null) {
+		if (articuloEnPedido != null) {
+			articuloEnPedido.setUnidades(articuloEnPedido.getUnidades() + unidades);
+		} else {
 			articuloEnPedido = new Articulo(articuloDelCatalogo);
 			articuloEnPedido.setUnidades(unidades);
 			listaPedido.add(articuloEnPedido);
 		}
 		calcularImporte();
+	}
+
+	// Quita unidades de un artículo; si se quitan todas, el artículo sale del pedido
+	public void eliminar(Articulo articuloDelCatalogo, int unidades) {
+		Articulo articuloEnPedido = buscar(articuloDelCatalogo);
+		if (articuloEnPedido == null) {
+			return;
+		}
+
+		int restantes = articuloEnPedido.getUnidades() - unidades;
+		if (restantes <= 0) {
+			listaPedido.remove(articuloEnPedido);
+		} else {
+			articuloEnPedido.setUnidades(restantes);
+		}
+		calcularImporte();
+	}
+
+	public boolean contiene(Articulo articulo) {
+		return buscar(articulo) != null;
+	}
+
+	public boolean isVacio() {
+		return listaPedido.isEmpty();
+	}
+
+	private Articulo buscar(Articulo articulo) {
+		if (articulo != null) {
+			for (Articulo a : listaPedido) {
+				if (a.getCodigo().equals(articulo.getCodigo())) {
+					return a;
+				}
+			}
+		}
+		return null;
 	}
 
 	public void grabarPedido() {
@@ -79,6 +108,7 @@ public class Pedido {
 
 	public void setLocal (boolean tipo) {
 		local = tipo;
+		calcularImporte();	// la bolsa depende de si es para llevar
 	}
 	
 	public boolean isLocal() {
@@ -94,16 +124,10 @@ public class Pedido {
 	}
 
 	public int getUnidades(Articulo articulo) {
-	    if (articulo != null) {
-	        for (Articulo a : listaPedido) {
-	            if (a.getCodigo().equals(articulo.getCodigo())) {
-	                return a.getUnidades();
-	            }
-	        }
-	    }
-	    return 0;
+	    Articulo articuloEnPedido = buscar(articulo);
+	    return articuloEnPedido != null ? articuloEnPedido.getUnidades() : 0;
 	}
-	
+
 	private void calcularImporte() {
 	    importe = 0;
 
@@ -111,8 +135,29 @@ public class Pedido {
 	        importe += a.getPrecio() * a.getUnidades();
 	    }
 
-	    if (!local) {
+	    if (!local && !listaPedido.isEmpty()) {
 	        importe += 0.15;
 	    }
+	}
+
+	// Formato del enunciado: "McPollo - 2 uds." por línea y "Total: 28,20" al final
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (Articulo a : listaPedido) {
+			sb.append(a.getDenominacion()).append(" - ").append(a.getUnidades()).append(" uds.\n");
+		}
+		sb.append(String.format(Locale.of("es", "ES"), "Total: %.2f", importe));
+		return sb.toString();
+	}
+
+	// Lo que se guarda en el fichero: cliente, pedido y si es para llevar o local
+	public String toFileString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Cliente: ").append(cliente).append("\n");
+		sb.append("----------------------------------\n");
+		sb.append(toString()).append("\n");
+		sb.append(local ? "Pedido para consumir en local" : "Pedido para llevar").append("\n");
+		return sb.toString();
 	}
 }

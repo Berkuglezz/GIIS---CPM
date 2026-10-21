@@ -44,6 +44,6 @@ public class Main {
 		scanner.close();
 		
 		System.out.println("tus articulos son: ");
-		
+		System.out.println(mc.getTextoPedido());
 	}
 }

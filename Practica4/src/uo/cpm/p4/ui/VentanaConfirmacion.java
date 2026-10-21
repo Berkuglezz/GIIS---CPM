@@ -82,6 +82,7 @@ public class VentanaConfirmacion extends JDialog{
 			textFieldCodigo.setEnabled(false);
 			textFieldCodigo.setBounds(170, 141, 96, 20);
 			textFieldCodigo.setColumns(10);
+			textFieldCodigo.setText(mc.getCodigoPedido());
 		}
 		return textFieldCodigo;
 	}
@@ -111,10 +112,10 @@ public class VentanaConfirmacion extends JDialog{
 	
 	private void resetear(McDonalds mc) {
 		mc.grabarPedido();
-		JOptionPane.showMessageDialog(null, "Muchas gracias por su compra");
+		JOptionPane.showMessageDialog(this, "Muchas gracias por su compra");
 		this.dispose();
 		vr.dispose();
-		mc.inicializarPedido();
+		vr.reiniciarVentanaPrincipal();	// también reinicia el pedido
 	}
 	private JTextField getTextFieldPrecioFinal() {
 		if (textFieldPrecioFinal == null) {
@@ -122,7 +123,7 @@ public class VentanaConfirmacion extends JDialog{
 			textFieldPrecioFinal.setEditable(false);
 			textFieldPrecioFinal.setBounds(170, 119, 96, 20);
 			textFieldPrecioFinal.setColumns(10);
-			textFieldPrecioFinal.setText(String.format("%.2f €", mc.getImportePedido()));
+			textFieldPrecioFinal.setText(String.format(java.util.Locale.of("es", "ES"), "%.2f €", mc.getImportePedido()));
 		}
 		return textFieldPrecioFinal;
 	}

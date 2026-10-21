@@ -32,7 +32,7 @@ public abstract class FileUtil {
 	public static void saveToFile(Pedido pedido) { 
 		try {
 			BufferedWriter fichero = new BufferedWriter(new FileWriter("files/" + pedido.getCodigo() + ".dat"));
-			fichero.write(pedido.getListaPedido().toString());
+			fichero.write(pedido.toFileString());	// incluye cliente y si es local o para llevar
 			fichero.close();
 		}
 
