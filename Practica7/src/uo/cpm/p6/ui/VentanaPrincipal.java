@@ -210,7 +210,7 @@ private void redimensionarTablero(Nivel nivel) {
 		if (panelDisparos == null) {
 			panelDisparos = new JPanel();
 			panelDisparos.setBackground(new Color(0, 0, 0));
-			panelDisparos.setBounds(342, 148, 340, 75);
+			panelDisparos.setBounds(280, 125, 520, 75);
 			panelDisparos.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		}
 		return panelDisparos;
@@ -296,21 +296,9 @@ private void redimensionarTablero(Nivel nivel) {
 	}
 
 	private void nuevaPartida() {
-		spaceInvaders.inicializar(Nivel.INTERMEDIO);
-		getPanelDisparos().removeAll();
-		getPanelDisparos().repaint();
-		destaparTablero();
-		habilitaTablero(false);
-		getBtnDado().setEnabled(true);
-		pintaPuntos();
-	}
-
-	private void destaparTablero() {
-		for (int i = 0; i < getPanelTablero().getComponentCount(); i++) {
-			JButton casilla = (JButton) getPanelTablero().getComponent(i);
-			casilla.setIcon(null);
-			casilla.setDisabledIcon(null);
-		}
+		if (JOptionPane.showConfirmDialog(this,
+				"¿Estas seguro de que quieres empezar una nueva partida?") == JOptionPane.YES_OPTION)
+			inicializarJuego(spaceInvaders.getNivel());
 	}
 
 	private void mostrarAcercaDe() {
@@ -324,8 +312,8 @@ private void redimensionarTablero(Nivel nivel) {
 		if (menuBar == null) {
 			menuBar = new JMenuBar();
 			menuBar.add(getMnJuego());
-			menuBar.add(getMnAyuda());
 			menuBar.add(getMnNivel());
+			menuBar.add(getMnAyuda());
 		}
 		return menuBar;
 	}
@@ -424,16 +412,10 @@ private void redimensionarTablero(Nivel nivel) {
 	}
 	
 	
-	class ProcesaBtTablero1 implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			JButton botonPulsado = (JButton) e.getSource();
-			int posicion = Integer.parseInt(botonPulsado.getActionCommand());
-			dispara(posicion);
-		}
-	}
 	private JMenu getMnNivel() {
 		if (mnNivel == null) {
 			mnNivel = new JMenu("Nivel");
+			mnNivel.setMnemonic('v');
 			mnNivel.add(getRdFacil());
 			mnNivel.add(getSeparator());
 			mnNivel.add(getRdInermedio());
@@ -445,6 +427,7 @@ private void redimensionarTablero(Nivel nivel) {
 	private JRadioButtonMenuItem getRdFacil() {
 		if (rdFacil == null) {
 			rdFacil = new JRadioButtonMenuItem("Facil");
+			rdFacil.setMnemonic('F');
 			rdFacil.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					inicializarJuego(Nivel.FACIL);
@@ -457,6 +440,7 @@ private void redimensionarTablero(Nivel nivel) {
 	private JRadioButtonMenuItem getRdInermedio() {
 		if (rdInermedio == null) {
 			rdInermedio = new JRadioButtonMenuItem("Intermedio");
+			rdInermedio.setMnemonic('I');
 			rdInermedio.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					inicializarJuego(Nivel.INTERMEDIO);
@@ -470,6 +454,7 @@ private void redimensionarTablero(Nivel nivel) {
 	private JRadioButtonMenuItem getRdDificil() {
 		if (rdDificil == null) {
 			rdDificil = new JRadioButtonMenuItem("Dificil");
+			rdDificil.setMnemonic('D');
 			rdDificil.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					inicializarJuego(Nivel.DIFICIL);
@@ -487,6 +472,8 @@ private void redimensionarTablero(Nivel nivel) {
 		pintaPuntos();
 		eliminaDisparos();
 		redimensionarTablero(nivel);
+		habilitaTablero(false);
+		validate();
 	}
 	
 	private void eliminaDisparos() {

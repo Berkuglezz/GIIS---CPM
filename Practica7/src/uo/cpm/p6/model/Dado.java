@@ -1,10 +1,9 @@
 package uo.cpm.p6.model;
-import uo.cpm.p6.game.Juego;
 
 public class Dado {
 	
-	public static int lanzar()
+	public static int lanzar(int maxDisparos)
 	{ 
-		return ((int) (Math.random() * Juego.MAX_DISPAROS) + 1);
+		return ((int) (Math.random() * maxDisparos) + 1);
 	}
 }

@@ -5,7 +5,6 @@ import uo.cpm.p6.model.Casilla.TipoCasilla;
 
 public class Juego {
 
-	public static final int MAX_DISPAROS = 4;
 	private int puntos;
 	private int disparos;
 	private Tablero tablero;
@@ -72,7 +71,7 @@ public class Juego {
 	}
 
 	public void lanzar() {
-		setDisparos(Dado.lanzar());
+		setDisparos(Dado.lanzar(nivel.getNumDisparos()));
 	}
 
 	public int getDisparos() {
