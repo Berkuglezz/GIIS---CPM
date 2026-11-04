@@ -190,6 +190,7 @@ private void pintaDisparos() {
 	private JButton getBtn0() {
 		if (btn0 == null) {
 			btn0 = new JButton("");
+			btn0.setToolTipText("Haz click para desbloquear");
 			btn0.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					dispara(0);
