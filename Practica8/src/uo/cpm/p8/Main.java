@@ -1,4 +1,4 @@
-package uo.cpm.p9;
+package uo.cpm.p8;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import javax.swing.UIManager;
 
 import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
 
-import uo.cpm.p9.iu.VentanaPrincipal;
-import uo.cpm.p9.player.MusicPlayer;
+import uo.cpm.p8.iu.VentanaPrincipal;
+import uo.cpm.p8.player.MusicPlayer;
 
 public class Main {
 

@@ -1,11 +1,11 @@
-package uo.cpm.p9.iu;
+package uo.cpm.p8.iu;
 
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import uo.cpm.p9.player.MusicPlayer;
+import uo.cpm.p8.player.MusicPlayer;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.List;
